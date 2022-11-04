@@ -2,48 +2,31 @@
 // https://lodge-industry.io
 
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:network/network.dart';
 import 'package:repository/src/repositories/movie/movies_repository.dart';
 
-extension RatingX on Rating {
-  Map<String, dynamic> toJson() => {
-        'average': average ?? 0,
-      };
-}
-
-extension ImageX on ImageModel {
-  Map<String, dynamic> toJson() => {
-        'medium': medium ?? '',
-        'original': original ?? '',
-      };
-}
-
-extension MovieX on Movie {
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'image': image.toJson(),
-        'name': name ?? '',
-        'rating': rating.toJson(),
-        'summary': summary ?? '',
-      };
-}
+part 'movie.g.dart';
 
 /// {@template movie}
 ///
 /// Reprsents the model of a single [Movie]
 ///
 /// {@endtemplate}
+@JsonSerializable(explicitToJson: true)
 class Movie extends Equatable {
   /// The Unique identifier for this [Movie]
   final int id;
 
   /// The image for this [Movie]
+  // @JsonKey(toJson: _imageToJson, fromJson: _imageFromJson)
   final ImageModel image;
 
   /// The name of this [Movie]
   final String? name;
 
   /// The rating for this [Movie]
+  // @JsonKey(toJson: _ratingToJson, fromJson: _ratingFromJson)
   final Rating rating;
 
   /// The summary for this [Movie]
@@ -93,15 +76,13 @@ class Movie extends Equatable {
     );
   }
 
+  /// {@macro movie}
   factory Movie.fromJson(Map<String, dynamic> json) {
-    return Movie(
-      id: json['id'] as int,
-      image: ImageModel.fromJson(json),
-      name: json['name'] as String?,
-      rating: Rating.fromJson(json),
-      summary: json['sumary'] as String?,
-    );
+    return _$MovieFromJson(json);
   }
+
+  /// Transform this instances serailized to json
+  Map<String, dynamic> toJson() => _$MovieToJson(this);
 
   //#endregion
 }

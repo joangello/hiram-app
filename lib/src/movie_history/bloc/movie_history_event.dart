@@ -1,4 +1,5 @@
-part of 'movie_history_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:repository/repository.dart';
 
 /// {@template movie_history_event}
 ///
