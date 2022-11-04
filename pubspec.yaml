@@ -1,0 +1,32 @@
+name: hiram
+description: A new Flutter project.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.0-119.0.dev <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cached_network_image: ^3.0.0
+  cupertino_icons: ^1.0.2
+  equatable: ^2.0.3
+  flutter_bloc: ^8.0.1
+  hydrated_bloc: ^8.0.1
+  network:
+    path: packages/network
+  path_provider: ^2.0.9
+  repository:
+    path: packages/repository
+  stream_transform: ^2.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
