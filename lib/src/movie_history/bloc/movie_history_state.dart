@@ -1,10 +1,17 @@
-part of 'movie_history_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:repository/repository.dart';
+
+import '../../core/core.dart';
+
+part 'movie_history_state.g.dart';
 
 /// {@template movie_history_state}
 ///
 /// Represents the state of [MovieHistoryBloc]
 ///
 /// {endtemplate}
+@JsonSerializable(explicitToJson: true)
 class MovieHistoryState extends Equatable {
   /// The list of all favorite movies selected by the user.
   final List<Movie> favoriteMovies;
@@ -42,6 +49,14 @@ class MovieHistoryState extends Equatable {
       status: DataLoadStatus.initial,
     );
   }
+
+  /// {@macro movie_history_state}
+  factory MovieHistoryState.fromJson(Map<String, dynamic> json) {
+    return _$MovieHistoryStateFromJson(json);
+  }
+
+  /// Transform this instances serailized to json
+  Map<String, dynamic> toJson() => _$MovieHistoryStateToJson(this);
 
   //#endregion
 

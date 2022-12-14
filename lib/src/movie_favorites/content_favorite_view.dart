@@ -88,7 +88,7 @@ class _FavoriteSummary extends StatelessWidget {
                 onTap: () {
                   context
                       .read<MovieHistoryBloc>()
-                      .add(RemoveFavoriteMovieChanged(movie));
+                      .add(ToggleFavoriteMovies(movie));
                 },
               ),
             ],

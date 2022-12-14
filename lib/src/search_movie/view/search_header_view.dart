@@ -27,6 +27,8 @@ class SearchHeaderViewState extends State<SearchHeaderView> {
   late TextEditingController _controller;
   String textController = '';
 
+  late FocusNode _focusNode;
+
   //#region Overriden methods
 
   @override
@@ -37,57 +39,65 @@ class SearchHeaderViewState extends State<SearchHeaderView> {
         textController = _controller.text;
       });
     });
+    _focusNode = FocusNode();
+    _focusNode.addListener(() => setState(() {}));
     super.initState();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 30),
-      child: TextField(
-        controller: _controller,
-        cursorColor: Colors.grey,
-        decoration: InputDecoration(
-          label: const Text(
-            "Search",
-            style: TextStyle(
-              color: Colors.grey,
+      padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(top: 30),
+      child: Column(
+        children: [
+          if (_focusNode.hasFocus) ...[
+            const Text(
+              'Encontramos el focus de esta mierda',
+              style: TextStyle(color: Colors.white),
+            )
+          ],
+          TextField(
+            focusNode: _focusNode,
+            controller: _controller,
+            cursorColor: Colors.grey,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              // prefixIcon: const Icon(
+              //   Icons.search,
+              //   color: Colors.grey,
+              // ),
+              // suffixIcon: _controller.text.isEmpty
+              //     ? const SizedBox.shrink()
+              //     : IconButton(
+              //         icon: const Icon(
+              //           Icons.clear,
+              //           color: Colors.white,
+              //         ),
+              //         onPressed: () {
+              //           _controller.text = '';
+              //           context.read<SearchMovieBloc>().add(DeleteSearch());
+              //         },
+              //       ),
+              disabledBorder: InputBorder.none,
+              //enabledBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
             ),
+            style: const TextStyle(color: Colors.grey),
+            onChanged: (name) => context
+                .read<SearchMovieBloc>()
+                .add(SearchChanged(textController)),
+            // onSubmitted: (text) =>
+            //     context.read<SearchMovieBloc>().add(AddSearchHistoryChanged(text)),
           ),
-          prefixIcon: const Icon(
-            Icons.search,
-            color: Colors.grey,
-          ),
-          suffixIcon: _controller.text.isEmpty
-              ? const SizedBox.shrink()
-              : IconButton(
-                  icon: const Icon(
-                    Icons.clear,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    _controller.text = '';
-                    context.read<SearchMovieBloc>().add(DeleteSearch());
-                  },
-                ),
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey, width: 1.0),
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white, width: 2.0),
-          ),
-        ),
-        style: const TextStyle(color: Colors.grey),
-        onChanged: (name) =>
-            context.read<SearchMovieBloc>().add(SearchChanged(textController)),
-        onSubmitted: (text) =>
-            context.read<SearchMovieBloc>().add(AddSearchHistoryChanged(text)),
+        ],
       ),
     );
   }

@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../movie_history/movie_history.dart';
 
-void main() {
+void main() async {
   final movieResource = MovieResource();
   final searchMovieResource = SearchMovieResource();
 
@@ -17,36 +17,36 @@ void main() {
     resource: searchMovieResource,
   );
 
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
-  // final storage = await HydratedStorage.build(
-  //   storageDirectory: await getApplicationDocumentsDirectory(),
-  // );
+  final storage = await HydratedStorage.build(
+    storageDirectory: await getApplicationDocumentsDirectory(),
+  );
 
-//   HydratedBlocOverrides.runZoned(
-//     () => runApp(
-//       MultiRepositoryProvider(
-//         providers: [
-//           RepositoryProvider.value(value: moviesRepository),
-//           RepositoryProvider.value(value: searchMoviesRepository),
-//         ],
-//         child: const MyApp(),
-//       ),
-//     ),
-//     storage: storage,
-//   );
-// }
-
-  runApp(
-    MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider.value(value: moviesRepository),
-        RepositoryProvider.value(value: searchMoviesRepository),
-      ],
-      child: const MyApp(),
+  HydratedBlocOverrides.runZoned(
+    () => runApp(
+      MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider.value(value: moviesRepository),
+          RepositoryProvider.value(value: searchMoviesRepository),
+        ],
+        child: const MyApp(),
+      ),
     ),
+    storage: storage,
   );
 }
+
+// runApp(
+//   MultiRepositoryProvider(
+//     providers: [
+//       RepositoryProvider.value(value: moviesRepository),
+//       RepositoryProvider.value(value: searchMoviesRepository),
+//     ],
+//     child: const MyApp(),
+//   ),
+// );
+// }
 
 class MyApp extends StatefulWidget {
   //#region Initializers

@@ -1,13 +1,14 @@
 // Copyright (c) 2022, Brothers Lopez
 // https://lodge-industry.io
 
-import 'package:equatable/equatable.dart';
 import 'package:hiram/src/core/data_load_status.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:repository/repository.dart';
+import 'movie_history_event.dart';
+import 'movie_history_state.dart';
 
-part 'movie_history_event.dart';
-part 'movie_history_state.dart';
+export 'movie_history_event.dart';
+export 'movie_history_state.dart';
 
 /// {@template movie_history_bloc}
 ///
@@ -15,9 +16,10 @@ part 'movie_history_state.dart';
 /// its state and events
 ///
 /// {@endtemplate}
-class MovieHistoryBloc extends Bloc<MovieHistoryEvent, MovieHistoryState> {
+class MovieHistoryBloc
+    extends HydratedBloc<MovieHistoryEvent, MovieHistoryState> {
   final MoviesRepository _moviesRepository;
-  final List<Movie> _favoriteMovies = [];
+  List<Movie> _favoriteMovies = [];
 
   //#region Initializers
 
@@ -25,27 +27,13 @@ class MovieHistoryBloc extends Bloc<MovieHistoryEvent, MovieHistoryState> {
   MovieHistoryBloc({required MoviesRepository moviesRepository})
       : _moviesRepository = moviesRepository,
         super(MovieHistoryState.initial()) {
-    on<AddFavoriteMovieChanged>(_handleAddFavoriteMovieChanged);
     on<MovieHistoryContentRequested>(_handleMovieHistoryContentRequested);
-    on<RemoveFavoriteMovieChanged>(_handleRemoveFavoriteMovieChanged);
+    on<ToggleFavoriteMovies>(_handleToggleFavoriteMovies);
   }
 
   //#endregion
 
   //#region Private methods
-
-  Future<void> _handleAddFavoriteMovieChanged(
-    AddFavoriteMovieChanged event,
-    Emitter<MovieHistoryState> emit,
-  ) async {
-    if (!_favoriteMovies.contains(event.movie)) {
-      _favoriteMovies.add(event.movie);
-      final favorites = _favoriteMovies.reversed.toList();
-      emit(state.copyWith(favoriteMovies: favorites));
-    } else {
-      emit(state.copyWith(favoriteMovies: state.favoriteMovies));
-    }
-  }
 
   Future<void> _handleMovieHistoryContentRequested(
     MovieHistoryContentRequested event,
@@ -62,11 +50,16 @@ class MovieHistoryBloc extends Bloc<MovieHistoryEvent, MovieHistoryState> {
     }
   }
 
-  Future<void> _handleRemoveFavoriteMovieChanged(
-    RemoveFavoriteMovieChanged event,
+  Future<void> _handleToggleFavoriteMovies(
+    ToggleFavoriteMovies event,
     Emitter<MovieHistoryState> emit,
   ) async {
-    if (_favoriteMovies.contains(event.movie)) {
+    if (!_favoriteMovies.contains(event.movie)) {
+      _favoriteMovies.add(event.movie);
+      final favorites = _favoriteMovies.reversed.toList();
+
+      emit(state.copyWith(favoriteMovies: favorites));
+    } else {
       _favoriteMovies.removeWhere((movie) => movie.id == event.movie.id);
       final movies = _favoriteMovies.reversed.toList();
 
@@ -74,35 +67,26 @@ class MovieHistoryBloc extends Bloc<MovieHistoryEvent, MovieHistoryState> {
     }
   }
 
-  // @override
-  // MovieHistoryState? fromJson(Map<String, dynamic> json) {
-  //   try {
-  //     return MovieHistoryState(
-  //       favoriteMovies: (json['favoriteMovies'] as List<dynamic>)
-  //           .map((e) => Movie.fromJson(e))
-  //           .toList(),
-  //       movies: (json['movies'] as List<dynamic>)
-  //           .map((e) => Movie.fromJson(e))
-  //           .toList(),
-  //       status: DataLoadStatus.values[json['status'] as int],
-  //     );
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
+  @override
+  MovieHistoryState? fromJson(Map<String, dynamic> json) {
+    try {
+      final state = MovieHistoryState.fromJson(json);
+      _favoriteMovies = state.favoriteMovies;
 
-  // @override
-  // Map<String, dynamic>? toJson(MovieHistoryState state) {
-  //   try {
-  //     return {
-  //       'favoriteMovies': state.favoriteMovies.map((e) => e.toJson()).toList(),
-  //       'movies': state.movies.map((e) => e.toJson()).toList(),
-  //       'status': state.status.index,
-  //     };
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
+      return state;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(MovieHistoryState state) {
+    try {
+      return state.toJson();
+    } catch (e) {
+      return null;
+    }
+  }
 
   //#endregion
 }

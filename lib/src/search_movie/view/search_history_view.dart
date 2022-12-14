@@ -30,14 +30,15 @@ class SearchHistoryView extends StatelessWidget {
       child: Column(
         children: [
           _buildHeader(),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           for (var search in searchesHistory) ...[
-            if (search is SearchMovie) ...[
-              _buildMovieSearch(search),
-              const SizedBox(height: 10)
-            ] else if (search is String) ...[
-              _buildTextSearch(search)
-            ]
+            _buildMovieSearch(search)
+            //   if (search is SearchMovie) ...[
+            //     _buildMovieSearch(search),
+            //     const SizedBox(height: 10)
+            //   ] else if (search is String) ...[
+            //     _buildTextSearch(search)
+            //   ]
           ]
         ],
       ),
@@ -53,11 +54,11 @@ class SearchHistoryView extends StatelessWidget {
         children: const [
           Text(
             'Recientes',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           Text(
             'Ver todo',
-            style: TextStyle(color: Colors.red),
+            style: TextStyle(color: Colors.blue),
           ),
         ],
       );
@@ -133,16 +134,16 @@ class _ListTileHistoryView extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            IconButton(
-              icon: const Icon(
+            GestureDetector(
+              child: const Icon(
                 Icons.close,
                 color: Colors.white,
                 size: 15,
               ),
-              onPressed: () => context
+              onTap: () => context
                   .read<SearchMovieBloc>()
                   .add(DeleteFromSearchHistory(content)),
-            )
+            ),
           ],
         ),
         const SizedBox(height: 10),

@@ -2,13 +2,17 @@
 // https://lodge-industry.io
 
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:network/network.dart';
+
+part 'rating.g.dart';
 
 /// {@template rating}
 ///
 /// Represent's the model of a single [Rating]
 ///
 /// {@endtemplate}
+@JsonSerializable()
 class Rating extends Equatable {
   /// The average for this [Rating]
   final double? average;
@@ -32,11 +36,13 @@ class Rating extends Equatable {
     return Rating(average: entry.average ?? 0);
   }
 
+  /// {@macro rating}
   factory Rating.fromJson(Map<String, dynamic> json) {
-    return Rating(
-      average: json['average'] ?? 0,
-    );
+    return _$RatingFromJson(json);
   }
+
+  /// Transform this instances serailized to json
+  Map<String, dynamic> toJson() => _$RatingToJson(this);
 
   //#endregion
 }

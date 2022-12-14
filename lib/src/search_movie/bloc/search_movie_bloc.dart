@@ -1,11 +1,12 @@
-import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hiram/src/core/data_load_status.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:repository/repository.dart';
 import 'package:stream_transform/stream_transform.dart';
 
-part 'search_movie_event.dart';
-part 'search_movie_state.dart';
+import 'search_movie_event.dart';
+import 'search_movie_state.dart';
+
+export 'search_movie_event.dart';
+export 'search_movie_state.dart';
 
 /// {@template search_movie_bloc}
 ///
@@ -13,9 +14,9 @@ part 'search_movie_state.dart';
 /// and its state and events.
 ///
 /// {@endtemplate}
-class SearchMovieBloc extends Bloc<SearchMovieEvent, SearchMovieState> {
+class SearchMovieBloc extends HydratedBloc<SearchMovieEvent, SearchMovieState> {
   final SearchMoviesRepository _moviesRepository;
-  final List<dynamic> _searchesHistory = [];
+  List<SearchMovie> _searchesHistory = [];
 
   SearchMovieBloc({required SearchMoviesRepository moviesRepository})
       : _moviesRepository = moviesRepository,
@@ -36,9 +37,10 @@ class SearchMovieBloc extends Bloc<SearchMovieEvent, SearchMovieState> {
     AddSearchHistoryChanged event,
     Emitter<SearchMovieState> emit,
   ) async {
-    if (!state.searchesHistory.contains(event.search)) {
+    if (!_searchesHistory.contains(event.search)) {
       _searchesHistory.add(event.search);
       final searches = _searchesHistory.reversed.toList();
+
       emit(state.copyWith(searchesHistory: searches));
     } else {
       emit(state.copyWith(searchesHistory: state.searchesHistory));
@@ -50,7 +52,8 @@ class SearchMovieBloc extends Bloc<SearchMovieEvent, SearchMovieState> {
     Emitter<SearchMovieState> emit,
   ) async {
     if (_searchesHistory.contains(event.search)) {
-      _searchesHistory.removeWhere((search) => search == event.search);
+      _searchesHistory
+          .removeWhere((search) => search.show.id == event.search.show.id);
       final searches = _searchesHistory.reversed.toList();
 
       emit(state.copyWith(searchesHistory: searches));
@@ -75,9 +78,30 @@ class SearchMovieBloc extends Bloc<SearchMovieEvent, SearchMovieState> {
       }
 
       final searches = await _moviesRepository.searchMovie(name: event.search);
-      emit(state.copyWith(searches: searches, search: event.search));
+      emit(state.copyWith(searches: searches));
     } catch (e, s) {
       addError(e, s);
+    }
+  }
+
+  @override
+  SearchMovieState? fromJson(Map<String, dynamic> json) {
+    try {
+      final state = SearchMovieState.fromJson(json);
+      _searchesHistory = state.searchesHistory;
+
+      return state;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(SearchMovieState state) {
+    try {
+      return state.toJson();
+    } catch (e) {
+      return null;
     }
   }
 

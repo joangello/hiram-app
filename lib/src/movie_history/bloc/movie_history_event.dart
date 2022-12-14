@@ -1,4 +1,5 @@
-part of 'movie_history_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:repository/repository.dart';
 
 /// {@template movie_history_event}
 ///
@@ -10,30 +11,6 @@ abstract class MovieHistoryEvent extends Equatable {
 
   /// {@macro movie_history_event}
   const MovieHistoryEvent();
-
-  //#endregion
-}
-
-/// {@template add_favorite_movie_changed}
-/// Subclass of [MovieHistoryEvent]
-///
-/// This event is emited when the user added a movie
-/// as favorite.
-///
-/// {@endtemplate}
-class AddFavoriteMovieChanged extends MovieHistoryEvent {
-  /// The movie added as favorite.
-  final Movie movie;
-
-  /// The list of properties that will be used to determine whether
-  /// two instances are equal.
-  @override
-  List<Object?> get props => [movie];
-
-  //#region Initializers
-
-  /// {@macro add_favorite_movie_changed}
-  const AddFavoriteMovieChanged(this.movie);
 
   //#endregion
 }
@@ -52,15 +29,15 @@ class MovieHistoryContentRequested extends MovieHistoryEvent {
   List<Object?> get props => [];
 }
 
-/// {@template remove_favorite_movie_changed}
+/// {@template toggle_favorite_movies}
 /// Subclass of [MovieHistoryEvent]
 ///
-/// This event is emited when the user removed a movie
+/// This event is emited when the user selected a movie
 /// from the list of favorites.
 ///
 /// {@endtemplate}
-class RemoveFavoriteMovieChanged extends MovieHistoryEvent {
-  /// The movie that will be removed.
+class ToggleFavoriteMovies extends MovieHistoryEvent {
+  /// The movie added as favorite.
   final Movie movie;
 
   /// The list of properties that will be used to determine whether
@@ -70,8 +47,8 @@ class RemoveFavoriteMovieChanged extends MovieHistoryEvent {
 
   //#region Initializers
 
-  /// {@macro remove_favorite_movie_changed}
-  const RemoveFavoriteMovieChanged(this.movie);
+  /// {@macro toggle_favorite_movies}
+  const ToggleFavoriteMovies(this.movie);
 
   //#endregion
 }

@@ -1,4 +1,5 @@
-part of 'search_movie_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:repository/repository.dart';
 
 /// {@template search_movie_event}
 ///
@@ -23,7 +24,7 @@ abstract class SearchMovieEvent extends Equatable {
 /// {@endtemplate}
 class AddSearchHistoryChanged extends SearchMovieEvent {
   /// The search selects by the user.
-  final dynamic search;
+  final SearchMovie search;
 
   /// The list of properties that will be used to determine whether
   /// two instances are equal.
@@ -47,7 +48,7 @@ class AddSearchHistoryChanged extends SearchMovieEvent {
 /// {@endtemplate}
 class DeleteFromSearchHistory extends SearchMovieEvent {
   /// The element that will be removed from the search history.
-  final dynamic search;
+  final SearchMovie search;
 
   /// The list of properties that will be used to determine whether
   /// two instances are equal.

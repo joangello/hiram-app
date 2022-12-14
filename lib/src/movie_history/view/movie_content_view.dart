@@ -70,10 +70,6 @@ class _FooterImage extends StatefulWidget {
 
 class FooterImageState extends State<_FooterImage>
     with AutomaticKeepAliveClientMixin {
-  /// A flag to indicate to the user that added
-  /// a movie as favorite
-  bool isFavorite = false;
-
   //#region Overriden methods
 
   @override
@@ -125,19 +121,9 @@ class FooterImageState extends State<_FooterImage>
         color: Colors.red,
       ),
       onTap: () {
-        setState(() {
-          isFavorite = !isFavorite;
-        });
-
-        if (isFavorite) {
-          context
-              .read<MovieHistoryBloc>()
-              .add(AddFavoriteMovieChanged(widget.movie));
-        } else {
-          context
-              .read<MovieHistoryBloc>()
-              .add(RemoveFavoriteMovieChanged(widget.movie));
-        }
+        context
+            .read<MovieHistoryBloc>()
+            .add(ToggleFavoriteMovies(widget.movie));
       },
     );
   }
