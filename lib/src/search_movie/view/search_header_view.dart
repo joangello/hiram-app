@@ -86,7 +86,7 @@ class SearchHeaderViewState extends State<SearchHeaderView> {
               //         },
               //       ),
               disabledBorder: InputBorder.none,
-              //enabledBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
               errorBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
             ),
