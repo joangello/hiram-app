@@ -75,6 +75,7 @@ class HomeBottomNavigationBar extends StatelessWidget {
     final selectedTab = context.watch<HomeBloc>().state;
 
     return SafeArea(
+      bottom: false,
       child: Container(
         decoration: _decoration,
         padding: const EdgeInsets.only(top: 6),

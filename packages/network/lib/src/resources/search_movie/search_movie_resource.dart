@@ -27,8 +27,9 @@ class SearchMovieResource {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final json = data as List<dynamic>;
-        final content = json.map((e) => SearchMovieEntry.fromJson(e)).toList();
+        final content = (data as List<dynamic>)
+            .map((e) => SearchMovieEntry.fromJson(e as Map<String, dynamic>))
+            .toList();
 
         return content;
       } else {

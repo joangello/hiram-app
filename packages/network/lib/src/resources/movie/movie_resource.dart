@@ -27,8 +27,8 @@ class MovieResource {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final list = data as List<dynamic>;
-        final content = list.map((e) => MovieEntry.fromJson(e)).toList();
+        final content =
+            (data as List<dynamic>).map((e) => MovieEntry.fromJson(e)).toList();
 
         return content;
       } else {
@@ -46,8 +46,9 @@ class MovieResource {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final list = data as List<dynamic>;
-        final content = list.map((e) => EpisodeEntry.fromJson(e)).toList();
+        final content = (data as List<dynamic>)
+            .map((e) => EpisodeEntry.fromJson(e as Map<String, dynamic>))
+            .toList();
 
         return content;
       } else {

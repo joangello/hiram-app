@@ -22,26 +22,21 @@ class SearchHistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final searchesHistory =
-        context.watch<SearchMovieBloc>().state.searchesHistory;
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Column(
-        children: [
-          _buildHeader(),
-          const SizedBox(height: 20),
-          for (var search in searchesHistory) ...[
-            _buildMovieSearch(search)
-            //   if (search is SearchMovie) ...[
-            //     _buildMovieSearch(search),
-            //     const SizedBox(height: 10)
-            //   ] else if (search is String) ...[
-            //     _buildTextSearch(search)
-            //   ]
-          ]
-        ],
-      ),
+    return BlocBuilder<SearchMovieBloc, SearchMovieState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: Column(
+            children: [
+              _buildHeader(),
+              const SizedBox(height: 20),
+              for (var search in state.recentlySearches) ...[
+                _HistoryContentView(search: search)
+              ]
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -54,64 +49,31 @@ class SearchHistoryView extends StatelessWidget {
         children: const [
           Text(
             'Recientes',
-            style: TextStyle(color: Colors.white, fontSize: 16),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
           ),
           Text(
             'Ver todo',
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(
+              color: Colors.blue,
+            ),
           ),
         ],
       );
 
-  Widget _buildMovieSearch(SearchMovie search) {
-    return _ListTileHistoryView(
-      content: search,
-      leading: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: CachedNetworkImage(
-          key: UniqueKey(),
-          imageUrl: search.show.image.original ?? '',
-          placeholder: (context, url) => Container(color: Colors.grey),
-          height: 60,
-          width: 60,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextSearch(String search) {
-    return _ListTileHistoryView(
-      content: search,
-      leading: Container(
-        height: 60,
-        width: 60,
-        decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-        child: const Icon(
-          Icons.search,
-          color: Colors.white,
-          size: 35,
-        ),
-      ),
-    );
-  }
-
   //#endregion
 }
 
-class _ListTileHistoryView extends StatelessWidget {
-  /// The content of data asocciated dto this view.
-  final dynamic content;
-
-  /// The leading widget for this list tile.
-  final Widget leading;
+class _HistoryContentView extends StatelessWidget {
+  final SearchMovie search;
 
   //#region Initializers
 
-  const _ListTileHistoryView({
+  const _HistoryContentView({
     Key? key,
-    required this.content,
-    required this.leading,
+    required this.search,
   }) : super(key: key);
 
   //#endregion
@@ -125,10 +87,20 @@ class _ListTileHistoryView extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            leading,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: CachedNetworkImage(
+                key: UniqueKey(),
+                imageUrl: search.show.image.original ?? '',
+                placeholder: (context, url) => Container(color: Colors.grey),
+                height: 60,
+                width: 60,
+                fit: BoxFit.cover,
+              ),
+            ),
             const SizedBox(width: 4),
             Text(
-              content is SearchMovie ? content.show.name : content,
+              search.show.name ?? '',
               style: const TextStyle(
                 color: Colors.white,
               ),
@@ -142,7 +114,7 @@ class _ListTileHistoryView extends StatelessWidget {
               ),
               onTap: () => context
                   .read<SearchMovieBloc>()
-                  .add(DeleteFromSearchHistory(content)),
+                  .add(DeleteFromSearchHistory(search)),
             ),
           ],
         ),

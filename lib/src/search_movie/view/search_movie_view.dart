@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hiram_ui/hiram_ui.dart';
 
 import '../search_movie.dart';
 
@@ -12,6 +13,11 @@ import '../search_movie.dart';
 ///
 /// {@endtemplate}
 class SearchMovieView extends StatelessWidget {
+  /// The padding of the content
+  EdgeInsets get _padding => const EdgeInsets.symmetric(
+        horizontal: 16,
+      ).copyWith(top: 16);
+
   //#region Initializers
 
   /// {@macro search_movie_view}
@@ -25,15 +31,26 @@ class SearchMovieView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return Column(
-            children: [
-              const SearchHeaderView(),
-              _SearchView(maxHeight: constraints.maxHeight),
-            ],
-          );
-        },
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Column(
+              children: [
+                Padding(
+                  padding: _padding,
+                  child: HiramSearchBar(
+                    onChanged: (value) {
+                      context.read<SearchMovieBloc>().add(SearchChanged(value));
+                    },
+                    onClear: () =>
+                        context.read<SearchMovieBloc>().add(DeleteSearch()),
+                  ),
+                ),
+                _SearchView(maxHeight: constraints.maxHeight),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

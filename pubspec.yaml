@@ -14,6 +14,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   equatable: ^2.0.3
   flutter_bloc: ^8.0.1
+  hiram_ui: 
+    path: packages/hiram_ui
   hydrated_bloc: ^8.0.1
   json_annotation: ^4.5.0
   network:

@@ -23,6 +23,9 @@ class SearchMovieState extends Equatable {
   // A flag to when the search history is presented.
   bool get isHistory => searches.isEmpty && searchesHistory.isNotEmpty;
 
+  /// The most recently searches of the user.
+  List<SearchMovie> get recentlySearches => searchesHistory.reversed.toList();
+
   @override
   List<Object> get props => [
         searches,

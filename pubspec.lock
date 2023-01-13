@@ -277,6 +277,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0"
+  hiram_ui:
+    dependency: "direct main"
+    description:
+      path: "packages/hiram_ui"
+      relative: true
+    source: path
+    version: "0.0.1"
   hive:
     dependency: transitive
     description:

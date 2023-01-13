@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hiram/src/core/data_load_status.dart';
 import 'package:hiram/src/movie_favorites/movie_favorite_page.dart';
 import 'package:hiram/src/movie_history/movie_history.dart';
 
@@ -105,36 +106,39 @@ class _FavoriteIndexIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final movieFavorites =
-        context.watch<MovieHistoryBloc>().state.favoriteMovies;
-
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        const Icon(
-          Icons.favorite_border,
-          color: Colors.red,
-          size: 30,
-        ),
-        Positioned(
-          right: -5,
-          top: -5,
-          child: CircleAvatar(
-            backgroundColor: Colors.red,
-            radius: 8,
-            child: Center(
-              child: Text(
-                "${movieFavorites.length}",
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
+    return BlocBuilder<MovieHistoryBloc, MovieHistoryState>(
+      builder: (context, state) {
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            const Icon(
+              Icons.favorite_border,
+              color: Colors.red,
+              size: 30,
+            ),
+            if (state.status == DataLoadStatus.success) ...[
+              Positioned(
+                right: -5,
+                top: -5,
+                child: CircleAvatar(
+                  backgroundColor: Colors.red,
+                  radius: 8,
+                  child: Center(
+                    child: Text(
+                      "${state.favoriteMovies.length}",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
-      ],
+            ],
+          ],
+        );
+      },
     );
   }
 

@@ -37,11 +37,12 @@ class SearchMovieBloc extends HydratedBloc<SearchMovieEvent, SearchMovieState> {
     AddSearchHistoryChanged event,
     Emitter<SearchMovieState> emit,
   ) async {
+    final state = this.state;
     if (!_searchesHistory.contains(event.search)) {
       _searchesHistory.add(event.search);
-      final searches = _searchesHistory.reversed.toList();
+      final search = _searchesHistory.last;
 
-      emit(state.copyWith(searchesHistory: searches));
+      emit(state.copyWith(searchesHistory: [...state.searchesHistory, search]));
     } else {
       emit(state.copyWith(searchesHistory: state.searchesHistory));
     }
@@ -51,12 +52,18 @@ class SearchMovieBloc extends HydratedBloc<SearchMovieEvent, SearchMovieState> {
     DeleteFromSearchHistory event,
     Emitter<SearchMovieState> emit,
   ) async {
+    final state = this.state;
     if (_searchesHistory.contains(event.search)) {
-      _searchesHistory
-          .removeWhere((search) => search.show.id == event.search.show.id);
-      final searches = _searchesHistory.reversed.toList();
+      // _searchesHistory.removeWhere(
+      //   (search) => search.show.id == event.search.show.id,
+      // );
+      final index = _searchesHistory.where((e) => e == event.search).toList();
 
-      emit(state.copyWith(searchesHistory: searches));
+      emit(
+        state.copyWith(
+          searchesHistory: [...state.searchesHistory]..remove(index.first),
+        ),
+      );
     }
   }
 
@@ -87,7 +94,12 @@ class SearchMovieBloc extends HydratedBloc<SearchMovieEvent, SearchMovieState> {
   @override
   SearchMovieState? fromJson(Map<String, dynamic> json) {
     try {
-      final state = SearchMovieState.fromJson(json);
+      final state = SearchMovieState(
+        searches: const [],
+        searchesHistory: (json['searchesHistory'] as List<dynamic>)
+            .map((e) => SearchMovie.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      );
       _searchesHistory = state.searchesHistory;
 
       return state;
@@ -99,11 +111,11 @@ class SearchMovieBloc extends HydratedBloc<SearchMovieEvent, SearchMovieState> {
   @override
   Map<String, dynamic>? toJson(SearchMovieState state) {
     try {
-      return state.toJson();
+      return {
+        'searchesHistory': state.searchesHistory.map((e) => e.toJson()).toList()
+      };
     } catch (e) {
       return null;
     }
   }
-
-  //#endregion
 }

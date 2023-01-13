@@ -70,7 +70,13 @@ class MovieHistoryBloc
   @override
   MovieHistoryState? fromJson(Map<String, dynamic> json) {
     try {
-      final state = MovieHistoryState.fromJson(json);
+      final state = MovieHistoryState(
+        favoriteMovies: (json['favoriteMovies'] as List<dynamic>)
+            .map((e) => Movie.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        movies: const [],
+        status: DataLoadStatus.initial,
+      );
       _favoriteMovies = state.favoriteMovies;
 
       return state;
@@ -82,7 +88,9 @@ class MovieHistoryBloc
   @override
   Map<String, dynamic>? toJson(MovieHistoryState state) {
     try {
-      return state.toJson();
+      return {
+        'favoriteMovies': state.favoriteMovies.map((e) => e.toJson()).toList()
+      };
     } catch (e) {
       return null;
     }
